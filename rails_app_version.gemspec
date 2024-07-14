@@ -15,9 +15,10 @@ Gem::Specification.new do |spec|
   spec.metadata['source_code_uri'] = spec.homepage
   spec.metadata['changelog_uri'] = "#{spec.homepage}/blob/master/CHANGELOG.md"
   spec.metadata['rubygems_mfa_required'] = 'true'
+  spec.required_ruby_version = '>= 3.1.0'
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
-    Dir['{lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
+    Dir['{config,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
   end
 
   spec.add_dependency 'railties', '~> 7.0'
