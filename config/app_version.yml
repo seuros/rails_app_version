@@ -1,0 +1,4 @@
+shared:
+  version: <%= Rails.root.join('VERSION').read.strip rescue '0.0.0' %>
+  revision: <%= Rails.root.join('REVISION').read.strip rescue (`git rev-parse HEAD`.strip rescue '0') %>
+  show_revision: <%= Rails.env.local? %>
