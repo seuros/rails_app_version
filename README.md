@@ -1,6 +1,10 @@
-# RailsAppVersion
+# Rails AppVersion
 
-RailsAppVersion is a Ruby on Rails engine designed to easily manage and access your application's version and environment information. It allows for a seamless integration of versioning within your Rails application, providing a straightforward way to access the current application version and environment without hardcoding these values.
+Rails AppVersion is a Ruby on Rails engine designed to easily manage and access your application's version and environment information. 
+
+It allows for a seamless integration of versioning within your Rails application, providing a straightforward way to access the current application version and environment without hardcoding these values.
+
+This gem is exclusively build for Rails applications and is compatible with Rails 7.0 and above.
 
 ## Usage
 How to use my plugin.
@@ -30,12 +34,12 @@ Rails.application.environment # => "staging"
 - Flexible Usage: Access the application version and environment information anywhere in your Rails application.
 
 ## Contributing
-Contributions are welcome, and they are greatly appreciated! Every little bit helps, and credit will always be given.  
-1.     Fork the repo
-2.     Create your feature branch (git checkout -b my-new-feature)
-3.     Commit your changes (git commit -am 'Add some feature')
-4.     Push to the branch (git push origin my-new-feature)
-5.     Create a new Pull Request
+Contributions are welcome, and they are greatly appreciated! Every little bit helps, and credit will always be given.
+1. Fork the repo
+2. Create your feature branch (git checkout -b my-new-feature)
+3. Commit your changes (git commit -am 'Add some feature')
+4. Push to the branch (git push origin my-new-feature)
+5. Create a new Pull Request
 
 ## License
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
