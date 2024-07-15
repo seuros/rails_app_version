@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails"
+require "rails/application"
 require "rails_app_version/version"
 
 module RailsAppVersion
@@ -19,11 +21,6 @@ module RailsAppVersion
 
       @version = @app_config[:version]
       @environment = @app_config[:environment] || Rails.env
-    end
-    initializer "patch_application" do |app|
-      # Inject the module into the application
-      app.class.send(:include, RailsAppVersion::AppVersion)
-      app.class.send(:include, RailsAppVersion::AppEnvironment)
     end
   end
 
@@ -51,3 +48,7 @@ module RailsAppVersion
     end
   end
 end
+
+
+Rails::Application.include RailsAppVersion::AppVersion
+Rails::Application.include RailsAppVersion::AppEnvironment
