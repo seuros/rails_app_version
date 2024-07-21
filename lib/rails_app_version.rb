@@ -35,6 +35,17 @@ module RailsAppVersion
       end
     end
 
+    # Console
+    console do
+      # rubocop:disable Rails/Output
+      puts "Welcome to the Rails console!"
+      puts "Ruby version: #{RUBY_VERSION}"
+      puts "Application environment: #{Rails.application.env}"
+      puts "Application version: #{Rails.application.version}"
+      puts "To exit, press `Ctrl + D`."
+      # rubocop:enable Rails/Output
+    end
+
     initializer "fetch_config" do |app|
       @app_config = begin
         app.config_for(:app_version, env: Rails.env)
