@@ -3,6 +3,7 @@
 require "rails"
 require "rails/application"
 require "rails_app_version/version"
+require "action_controller/railtie"
 
 module RailsAppVersion
   class Version < Gem::Version
