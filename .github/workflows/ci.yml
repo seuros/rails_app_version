@@ -23,7 +23,20 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-
+    env:
+      RAILS_ENV: test
+      RAILS_APP_ENV: sandbox
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby:
+          - '3.3'
+          - '3.2'
+          - '3.1'
+        rails:
+          - r7
+          - r71
+          - r72
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -31,11 +44,14 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ruby-3.3.4
+          ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+          rubygems: latest
+        env:
+          BUNDLE_GEMFILE: gemfiles/${{ matrix.rails }}.gemfile
 
       - name: Run tests
         env:
-          RAILS_ENV: test
           RAILS_APP_ENV: sandbox
+          BUNDLE_GEMFILE: gemfiles/${{ matrix.rails }}.gemfile
         run: bin/rails test

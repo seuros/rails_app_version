@@ -6,3 +6,5 @@ require "rails/test_help"
 
 # load tasks
 Rails.application.load_tasks
+
+puts "Rails version: #{Rails.version}"
