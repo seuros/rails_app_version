@@ -22,4 +22,5 @@ Gem::Specification.new do |spec|
   end
 
   spec.add_dependency 'railties', '~> 7.0'
+  spec.add_development_dependency 'dotenv-rails'
 end

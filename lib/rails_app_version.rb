@@ -6,7 +6,7 @@ require "rails_app_version/version"
 
 module RailsAppVersion
   class Engine < ::Rails::Engine
-    attr_reader :app_config, :version, :environment
+    attr_reader :app_config, :version, :env
 
     initializer "fetch_config" do |app|
       @app_config = begin
@@ -20,7 +20,7 @@ module RailsAppVersion
                     end
 
       @version = @app_config[:version]
-      @environment = @app_config[:environment] || Rails.env
+      @env = ActiveSupport::StringInquirer.new(@app_config[:environment] || Rails.env)
     end
   end
 
@@ -40,15 +40,14 @@ module RailsAppVersion
     extend ActiveSupport::Concern
 
     included do
-      def environment
-        @environment ||= railties.find do |railtie|
+      def env
+        @env ||= railties.find do |railtie|
           railtie.is_a?(RailsAppVersion::Engine)
-        end.environment
+        end.env
       end
     end
   end
 end
-
 
 Rails::Application.include RailsAppVersion::AppVersion
 Rails::Application.include RailsAppVersion::AppEnvironment
