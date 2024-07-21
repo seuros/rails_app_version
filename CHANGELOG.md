@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/seuros/rails_app_version/compare/v0.2.0...v0.2.1) (2024-07-21)
+
+
+### Features
+
+* Replace Engine with Railtie in RailsAppVersion module ([8ae43f5](https://github.com/seuros/rails_app_version/commit/8ae43f53817b22242bddc516dd3383a61aff7bb1))
+
 ## [0.2.0](https://github.com/seuros/rails_app_version/compare/rails_app_version-v0.1.2...rails_app_version/v0.2.0) (2024-07-21)
 
 
