@@ -6,6 +6,7 @@ require "rails_app_version/version"
 
 module RailsAppVersion
   class Engine < ::Rails::Engine
+    load "tasks/rails_app_version.rake"
     attr_reader :app_config, :version, :env
 
     initializer "fetch_config" do |app|
