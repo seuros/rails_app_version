@@ -5,7 +5,7 @@ require "test_helper"
 class AppVersionRakeTaskTest < ActiveSupport::TestCase
   setup do
     # Setup test environment
-    @source = RailsAppVersion::Engine.root.join("config", "app_version.yml")
+    @source = RailsAppVersion::Railtie.root.join("config", "app_version.yml")
     @destination = Rails.root.join("config", "app_version.yml")
   end
 

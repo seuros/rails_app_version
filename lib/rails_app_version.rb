@@ -11,15 +11,19 @@ module RailsAppVersion
       (to_s).parameterize
     end
   end
-  class Engine < ::Rails::Engine
+  class Railtie < ::Rails::Railtie
     attr_reader :app_config, :version, :env
+
+    def root
+      @root ||= Pathname.new(File.expand_path("..", __dir__))
+    end
 
     rake_tasks do
       namespace :app do
         namespace :version do
           desc "Copy config/app_version.yml to the main app config directory"
           task :config do
-            source = RailsAppVersion::Engine.root.join("config", "app_version.yml")
+            source = RailsAppVersion::Railtie.root.join("config", "app_version.yml")
             destination = Rails.root.join("config", "app_version.yml")
 
             FileUtils.cp(source, destination)
@@ -36,7 +40,7 @@ module RailsAppVersion
       rescue RuntimeError
         # Load the default configuration from the gem, if the app does not have one
         require "erb"
-        yaml = Engine.root.join("config", "app_version.yml")
+        yaml = Railtie.root.join("config", "app_version.yml")
         all_configs = ActiveSupport::ConfigurationFile.parse(yaml).deep_symbolize_keys
         all_configs[:shared]
                     end
@@ -52,7 +56,7 @@ module RailsAppVersion
     included do
       def version
         @version ||= railties.find do |railtie|
-          railtie.is_a?(RailsAppVersion::Engine)
+          railtie.is_a?(RailsAppVersion::Railtie)
         end.version
       end
     end
@@ -64,7 +68,7 @@ module RailsAppVersion
     included do
       def env
         @env ||= railties.find do |railtie|
-          railtie.is_a?(RailsAppVersion::Engine)
+          railtie.is_a?(RailsAppVersion::Railtie)
         end.env
       end
     end
