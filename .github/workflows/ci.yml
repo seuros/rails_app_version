@@ -37,4 +37,5 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
+          RAILS_APP_ENV: sandbox
         run: bin/rails test
