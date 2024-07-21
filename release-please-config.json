@@ -1,6 +1,5 @@
 {
   "release-type": "ruby",
-  "package-name": "rails_app_version",
   "version-file": "lib/rails_app_version/version.rb",
   "bump-patch-for-minor-pre-major": true
 }
