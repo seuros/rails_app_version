@@ -4,7 +4,7 @@ load "rails/tasks/statistics.rake"
 
 require "bundler/gem_tasks"
 
-# Load the Rails tasks
-require "rails/tasks"
+# Load Rakefile of the dummy app
+load "test/dummy/Rakefile"
 
 task :default, %i[test]
