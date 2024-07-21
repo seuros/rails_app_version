@@ -11,10 +11,24 @@ module RailsAppVersion
       (to_s).parameterize
     end
   end
-
   class Engine < ::Rails::Engine
-    load "tasks/rails_app_version.rake"
     attr_reader :app_config, :version, :env
+
+    rake_tasks do
+      namespace :app do
+        namespace :version do
+          desc "Copy config/app_version.yml to the main app config directory"
+          task :config do
+            source = RailsAppVersion::Engine.root.join("config", "app_version.yml")
+            destination = Rails.root.join("config", "app_version.yml")
+
+            FileUtils.cp(source, destination)
+
+            puts "Installed app_version.yml to #{destination}"
+          end
+        end
+      end
+    end
 
     initializer "fetch_config" do |app|
       @app_config = begin
