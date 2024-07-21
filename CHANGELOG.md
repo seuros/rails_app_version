@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/seuros/rails_app_version/compare/v0.2.1...v1.0.0) (2024-07-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* add console output ([#9](https://github.com/seuros/rails_app_version/issues/9))
+
+### Features
+
+* add console output ([#9](https://github.com/seuros/rails_app_version/issues/9)) ([35c65a6](https://github.com/seuros/rails_app_version/commit/35c65a6fca1bec8469205cf37552046c47a19603))
+
 ## [0.2.1](https://github.com/seuros/rails_app_version/compare/v0.2.0...v0.2.1) (2024-07-21)
 
 
