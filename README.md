@@ -25,7 +25,7 @@ $ bundle
     After adding the gem, you can access the application version and environment information anywhere in your Rails application.
 ```ruby
 Rails.application.version # => "1.0.0"
-Rails.application.environment # => "staging"
+Rails.application.env # => "staging"
 ```
 
 ## Features
