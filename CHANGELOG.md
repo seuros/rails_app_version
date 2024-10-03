@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/seuros/rails_app_version/compare/v1.0.0...v1.1.0) (2024-10-03)
+
+
+### Features
+
+* Allow rails 8 ([0b92fab](https://github.com/seuros/rails_app_version/commit/0b92fab2198405f454b5a9ea2e521aef7d609d92))
+
 ## [1.0.0](https://github.com/seuros/rails_app_version/compare/v0.2.1...v1.0.0) (2024-07-21)
 
 
