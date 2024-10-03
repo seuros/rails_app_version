@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
     Dir['{config,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
   end
 
-  spec.add_dependency 'railties', '~> 7.0'
+  spec.add_dependency 'railties', '>= 7.0', '< 8.1'
   spec.add_development_dependency 'dotenv-rails'
   spec.add_development_dependency "appraisal"
 end

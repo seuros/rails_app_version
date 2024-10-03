@@ -37,6 +37,7 @@ jobs:
           - r7
           - r71
           - r72
+          - r8
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
