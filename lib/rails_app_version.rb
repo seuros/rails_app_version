@@ -3,86 +3,58 @@
 require "rails"
 require "rails/application"
 require "rails_app_version/version"
+require "rails_app_version/railtie"
+require "rails_app_version/app_version"
+require "rails_app_version/app_environment"
+require "rails_app_version/version"
 require "action_controller/railtie"
 
 module RailsAppVersion
   class Version < Gem::Version
-    # This method cache used by Rails.cache.fetch to generate a cache key
+    attr_reader :major, :minor, :patch, :pre
+
+    def initialize(version_string)
+      super
+      parse_version(version_string)
+    end
+
     def to_cache_key
-      (to_s).parameterize
-    end
-  end
-  class Railtie < ::Rails::Railtie
-    attr_reader :app_config, :version, :env
-
-    def root
-      @root ||= Pathname.new(File.expand_path("..", __dir__))
+      parts = [ major, minor ]
+      parts << patch if has_patch?
+      parts << pre if prerelease?
+      parts.join("-")
     end
 
-    rake_tasks do
-      namespace :app do
-        namespace :version do
-          desc "Copy config/app_version.yml to the main app config directory"
-          task :config do
-            source = RailsAppVersion::Railtie.root.join("config", "app_version.yml")
-            destination = Rails.root.join("config", "app_version.yml")
+    def prerelease?
+      !@pre.nil?
+    end
 
-            FileUtils.cp(source, destination)
+    def production_ready?
+      !prerelease? && major.positive?
+    end
 
-            puts "Installed app_version.yml to #{destination}"
-          end
-        end
+    def has_patch?
+      !@patch.nil?
+    end
+
+    private
+
+    def parse_version(version_string)
+      if version_string.nil? || version_string.empty?
+        raise ArgumentError, "Version string cannot be nil or empty"
       end
-    end
 
-    # Console
-    console do
-      # rubocop:disable Rails/Output
-      puts "Welcome to the Rails console!"
-      puts "Ruby version: #{RUBY_VERSION}"
-      puts "Application environment: #{Rails.application.env}"
-      puts "Application version: #{Rails.application.version}"
-      puts "To exit, press `Ctrl + D`."
-      # rubocop:enable Rails/Output
-    end
+      parts = version_string.split(".")
+      pre_parts = parts.last.split("-")
 
-    initializer "fetch_config" do |app|
-      @app_config = begin
-        app.config_for(:app_version, env: Rails.env)
-      rescue RuntimeError
-        # Load the default configuration from the gem, if the app does not have one
-        require "erb"
-        yaml = Railtie.root.join("config", "app_version.yml")
-        all_configs = ActiveSupport::ConfigurationFile.parse(yaml).deep_symbolize_keys
-        all_configs[:shared]
-                    end
-
-      @version = Version.new(@app_config[:version])
-      @env = ActiveSupport::StringInquirer.new(@app_config[:environment] || Rails.env)
-    end
-  end
-
-  module AppVersion
-    extend ActiveSupport::Concern
-
-    included do
-      def version
-        @version ||= railties.find do |railtie|
-          railtie.is_a?(RailsAppVersion::Railtie)
-        end.version
+      if pre_parts.length > 1
+        parts[-1] = pre_parts[0]
+        @pre = pre_parts[1]
       end
-    end
-  end
 
-  module AppEnvironment
-    extend ActiveSupport::Concern
-
-    included do
-      def env
-        @env ||= railties.find do |railtie|
-          railtie.is_a?(RailsAppVersion::Railtie)
-        end.env
-      end
+      @major = parts[0].to_i
+      @minor = parts[1]&.to_i || 0
+      @patch = parts[2]&.to_i
     end
   end
 end
