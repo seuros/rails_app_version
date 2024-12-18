@@ -1,18 +1,19 @@
-
 module RailsAppVersion
   class Railtie < ::Rails::Railtie
-    attr_reader :app_config, :version, :env
-
-    def root
-      @root ||= Pathname.new(File.expand_path("..", __dir__))
+    class << self
+      def root
+        @root ||= Pathname.new(File.expand_path(File.expand_path("../../", __dir__)))
+      end
     end
+
+    attr_reader :app_config, :version, :env
 
     rake_tasks do
       namespace :app do
         namespace :version do
           desc "Copy config/app_version.yml to the main app config directory"
           task :config do
-            source = RailsAppVersion::Railtie.root.join("..", "config", "app_version.yml")
+            source = Railtie.root.join("config", "app_version.yml")
             destination = Rails.root.join("config", "app_version.yml")
 
             FileUtils.cp(source, destination)
@@ -40,13 +41,14 @@ module RailsAppVersion
                     rescue RuntimeError => e # file is not found
                       # Load the default configuration from the gem, if the app does not have one
                       require "erb"
-                      yaml = Railtie.root.join("..","config", "app_version.yml")
+
+                      yaml = Railtie.root.join("config", "app_version.yml")
                       all_configs = ActiveSupport::ConfigurationFile.parse(yaml).deep_symbolize_keys
                       all_configs[:shared]
                     end
 
       @version = Version.new(@app_config[:version])
-      @env = ActiveSupport::StringInquirer.new(@app_config.fetch(:environment,Rails.env))
+      @env = ActiveSupport::StringInquirer.new(@app_config.fetch(:environment, Rails.env))
     end
   end
 end
