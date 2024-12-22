@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/seuros/rails_app_version/compare/v1.1.0...v1.1.1) (2024-12-22)
+
+
+### Bug Fixes
+
+* fix Railtie root ([b13aaac](https://github.com/seuros/rails_app_version/commit/b13aaac47627414bb2929256a976d2cfe1d0e540))
+
 ## [1.1.0](https://github.com/seuros/rails_app_version/compare/v1.0.0...v1.1.0) (2024-10-03)
 
 
