@@ -9,3 +9,5 @@ gem "railties", "~> 8.0.1"
 gem "rubocop-rails-omakase", require: false
 
 gem "dotenv-rails", require: "dotenv/load"
+
+gem "mocha", "~> 2.7"

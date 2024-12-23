@@ -1,45 +1,263 @@
 # Rails AppVersion
 
-Rails AppVersion is a Ruby on Rails engine designed to easily manage and access your application's version and environment information. 
+Rails AppVersion provides an opinionated version and environment management for your Rails applications. By exposing
+version and environment information throughout your application, it enables better error tracking, debugging, and
+deployment management.
 
-It allows for a seamless integration of versioning within your Rails application, providing a straightforward way to access the current application version and environment without hardcoding these values.
+## Why Use Rails AppVersion?
 
-This gem is exclusively build for Rails applications and is compatible with Rails 7.0 and above.
+Version and environment tracking are important for modern web applications, particularly when debugging issues in
+production. Rails AppVersion helps you:
 
-## Usage
-How to use my plugin.
+- Track errors with version context in error reporting services
+- Identify which version of your application is running in each environment
+- Cache bust assets between versions
+- Verify deployment success across environments
+- Avoid homegrown version management solutions
+
+### Error Reporting Integration Example
+
+```ruby
+Sentry.init do |config|
+  config.release = Rails.application.version.to_s
+  config.environment = Rails.application.env
+end
+```
+
+### Cache Management Example
+
+```ruby
+
+class AssetManifest
+  def asset_path(path)
+    "/assets/#{path}?v=#{Rails.application.version.to_cache_key}"
+  end
+end
+```
 
 ## Installation
+
 Add this line to your application's Gemfile:
 
 ```ruby
 gem "rails_app_version"
 ```
 
-And then execute:
+Then execute:
+
 ```bash
-$ bundle
+$ bundle install
+$ rails app:version:config  # Copies the default configuration file
+$ echo "1.0.0" > VERSION            # Create initial version file
 ```
 
-## Usage:
-    After adding the gem, you can access the application version and environment information anywhere in your Rails application.
+## Version Management
+
+Rails AppVersion supports two methods for managing your application's version:
+
+### Recommended: Using a VERSION File
+
+The recommended approach is to maintain a `VERSION` file in your application's root directory. This file should contain
+only the version number:
+
+```plaintext
+# VERSION
+1.2.3
+```
+
+This approach offers several advantages:
+
+- Clear version history in source control
+- Easy automated updates during deployment
+- Separation of version from configuration
+- Compatibility with CI/CD pipelines
+
+### Alternative: Configuration in YAML
+
+While not recommended for production applications, you can also specify the version directly in the configuration file.
+The default configuration file is located at `config/app_version.yml`:
+
+```yaml
+shared:
+  # Attempts to read from VERSION file, falls back to '0.0.0'
+  version: <%= Rails.root.join('VERSION').read.strip rescue '0.0.0' %>
+  # Attempts to read from REVISION file, then tries git commit hash, finally falls back to '0'
+  revision: <%= Rails.root.join('REVISION').read.strip rescue (`git rev-parse HEAD`.strip rescue '0') %>
+  show_revision: <%= Rails.env.local? %>
+  environment: <%= ENV.fetch('RAILS_APP_ENV', Rails.env) %>
+```
+
+You can customize this configuration for different environments, though we recommend maintaining version information in
+the VERSION file:
+
+```yaml
+shared:
+  # Not recommended: hardcoding version in YAML
+  version: '1.2.3'
+  environment: production
+
+development:
+  environment: local
+  show_revision: true
+
+staging:
+  environment: staging
+```
+
+## Usage
+
+### Accessing Version Information
+
 ```ruby
-Rails.application.version # => "1.0.0"
-Rails.application.env # => "staging"
+# Get the current version
+Rails.application.version.to_s # => "1.2.3"
+
+# Check version components
+Rails.application.version.major # => 1
+Rails.application.version.minor # => 2
+Rails.application.version.patch # => 3
+
+# Check version status
+Rails.application.version.production_ready? # => true
+Rails.application.version.prerelease? # => false
+
+# Get a cache-friendly version string
+Rails.application.version.to_cache_key # => "1-2-3"
 ```
 
-## Features
-- Easy Configuration: Set up your application version and environment in a simple YAML file.
-- Automatic Integration: The engine automatically integrates with your Rails application, making the version and environment information accessible.
-- Flexible Usage: Access the application version and environment information anywhere in your Rails application.
+## Version Headers Middleware
+
+Rails AppVersion includes an optional middleware that adds version and environment information to HTTP response headers.
+This is particularly useful in staging and development environments to verify deployment success and track which version
+of the application is serving requests.
+
+### Configuring the Middleware
+
+Enable and configure the middleware in your `config/app_version.yml`:
+
+```yaml
+development:
+  middleware:
+    enabled: true
+    options:
+      include_revision: true  # Include git revision in headers
+      version_header: X-App-Version
+      environment_header: X-App-Environment
+      revision_header: X-App-Revision
+
+staging:
+  middleware:
+    enabled: true
+    options:
+      version_header: X-Staging-Version
+      environment_header: X-Staging-Environment
+```
+
+### Manual Middleware Configuration
+
+You can also add the middleware manually in your application configuration:
+
+```ruby
+# config/application.rb or config/environments/staging.rb
+config.middleware.use RailsAppVersion::AppInfoMiddleware, {
+  version_header: 'X-Custom-Version',
+  environment_header: 'X-Custom-Environment',
+  include_revision: true
+}
+```
+
+The middleware will add the following headers to each response:
+
+- X-App-Version: Current application version, optionally including revision (e.g., "1.2.3" or "1.2.3 (abc123de)")
+- X-App-Environment: Current environment (e.g., "staging")
+
+When `include_revision` is enabled, the version header will include the first 8 characters of the git revision in
+parentheses. This provides a quick way to verify both the version and the specific deployment in a single header.
+
+This makes it easy for developers to verify which version is deployed and running in each environment, particularly
+useful during deployments and debugging.
+
+### Environment Management
+
+```ruby
+# Get the current environment
+Rails.application.env # => "staging"
+
+# Environment checks
+Rails.application.env.production? # => false
+Rails.application.env.staging? # => true
+```
+
+### Console Integration
+
+The gem automatically displays version and environment information when you start a Rails console:
+
+```
+Welcome to the Rails console!
+Ruby version: 3.2.0
+Application environment: staging
+Application version: 1.2.3
+To exit, press `Ctrl + D`.
+```
+
+## Version Format
+
+Rails AppVersion supports several version formats:
+
+- Standard versions: "1.2.3" (major.minor.patch)
+- Short versions: "1.2" (major.minor)
+- Pre-release versions: "2.0.0-alpha" (with pre-release identifier)
+
+Version strings are parsed according to Semantic Versioning principles and maintain compatibility with `Gem::Version`
+for comparison operations.
+
+## Version Headers
+
+Enable version headers in HTTP responses to verify deployments and track running versions:
+
+```yaml
+# config/app_version.yml
+development:
+  middleware:
+    enabled: true
+    options:
+      include_revision: true
+
+staging:
+  middleware:
+    enabled: true
+```
+
+Or add the middleware manually:
+
+```ruby
+# config/application.rb
+config.middleware.use RailsAppVersion::AppInfoMiddleware, {
+  version_header: 'X-App-Version',
+  environment_header: 'X-App-Environment',
+  include_revision: true
+}
+```
+
+Headers added:
+
+- X-App-Version: "1.2.3" (or "1.2.3 (abc123de)" with revision)
+- X-App-Environment: "production"
 
 ## Contributing
-Contributions are welcome, and they are greatly appreciated! Every little bit helps, and credit will always be given.
-1. Fork the repo
-2. Create your feature branch (git checkout -b my-new-feature)
-3. Commit your changes (git commit -am 'Add some feature')
-4. Push to the branch (git push origin my-new-feature)
-5. Create a new Pull Request
+
+We welcome contributions! Here's how you can help:
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Add tests for your changes
+4. Make your changes and ensure tests pass
+5. Commit your changes (`git commit -am 'Add some feature'`)
+6. Push to the branch (`git push origin my-new-feature`)
+7. Create a new Pull Request
+
+Please ensure your changes include appropriate tests and documentation.
 
 ## License
+
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

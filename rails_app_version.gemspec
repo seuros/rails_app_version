@@ -3,12 +3,12 @@
 require_relative 'lib/rails_app_version/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'rails_app_version'
-  spec.version     = RailsAppVersion::VERSION
-  spec.authors     = [ 'Abdelkader Boudih' ]
-  spec.email       = [ 'terminale@gmail.com' ]
-  spec.homepage    = 'https://github.com/seuros/rails_app_version'
-  spec.summary     = 'Get the version of your Rails app'
+  spec.name = 'rails_app_version'
+  spec.version = RailsAppVersion::VERSION
+  spec.authors = [ 'Abdelkader Boudih' ]
+  spec.email = [ 'terminale@gmail.com' ]
+  spec.homepage = 'https://github.com/seuros/rails_app_version'
+  spec.summary = 'Get the version of your Rails app'
   spec.description = spec.summary
 
   spec.metadata['homepage_uri'] = spec.homepage

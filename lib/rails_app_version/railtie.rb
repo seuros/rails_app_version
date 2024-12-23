@@ -39,15 +39,14 @@ module RailsAppVersion
       @app_config = begin
                       app.config_for(:app_version, env: Rails.env)
                     rescue RuntimeError => e # file is not found
-                      # Load the default configuration from the gem, if the app does not have one
+                      # Load the default configuration from the gem
                       require "erb"
-
                       yaml = Railtie.root.join("config", "app_version.yml")
                       all_configs = ActiveSupport::ConfigurationFile.parse(yaml).deep_symbolize_keys
                       all_configs[:shared]
                     end
 
-      @version = Version.new(@app_config[:version])
+      @version = RailsAppVersion::Version.create(@app_config[:version], @app_config[:revision])
       @env = ActiveSupport::StringInquirer.new(@app_config.fetch(:environment, Rails.env))
     end
   end
