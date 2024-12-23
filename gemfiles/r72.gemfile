@@ -5,5 +5,6 @@ source "https://rubygems.org"
 gem "railties", "~> 7.2.0"
 gem "rubocop-rails-omakase", require: false
 gem "dotenv-rails", require: "dotenv/load"
+gem "mocha", "~> 2.7"
 
 gemspec path: "../"

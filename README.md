@@ -1,15 +1,19 @@
 # Rails AppVersion
 
-Rails AppVersion provides seamless version and environment management for your Rails applications. By exposing version and environment information throughout your application, it enables better error tracking, debugging, and deployment management.
+Rails AppVersion provides an opinionated version and environment management for your Rails applications. By exposing
+version and environment information throughout your application, it enables better error tracking, debugging, and
+deployment management.
 
 ## Why Use Rails AppVersion?
 
-Version and environment tracking are crucial for modern web applications, particularly when debugging issues in production. Rails AppVersion helps you:
+Version and environment tracking are important for modern web applications, particularly when debugging issues in
+production. Rails AppVersion helps you:
 
 - Track errors with version context in error reporting services
 - Identify which version of your application is running in each environment
 - Cache bust assets between versions
 - Verify deployment success across environments
+- Avoid homegrown version management solutions
 
 ### Error Reporting Integration Example
 
@@ -23,6 +27,7 @@ end
 ### Cache Management Example
 
 ```ruby
+
 class AssetManifest
   def asset_path(path)
     "/assets/#{path}?v=#{Rails.application.version.to_cache_key}"
@@ -52,7 +57,8 @@ Rails AppVersion supports two methods for managing your application's version:
 
 ### Recommended: Using a VERSION File
 
-The recommended approach is to maintain a `VERSION` file in your application's root directory. This file should contain only the version number:
+The recommended approach is to maintain a `VERSION` file in your application's root directory. This file should contain
+only the version number:
 
 ```plaintext
 # VERSION
@@ -60,6 +66,7 @@ The recommended approach is to maintain a `VERSION` file in your application's r
 ```
 
 This approach offers several advantages:
+
 - Clear version history in source control
 - Easy automated updates during deployment
 - Separation of version from configuration
@@ -67,7 +74,8 @@ This approach offers several advantages:
 
 ### Alternative: Configuration in YAML
 
-While not recommended for production applications, you can also specify the version directly in the configuration file. The default configuration file is located at `config/app_version.yml`:
+While not recommended for production applications, you can also specify the version directly in the configuration file.
+The default configuration file is located at `config/app_version.yml`:
 
 ```yaml
 shared:
@@ -79,7 +87,8 @@ shared:
   environment: <%= ENV.fetch('RAILS_APP_ENV', Rails.env) %>
 ```
 
-You can customize this configuration for different environments, though we recommend maintaining version information in the VERSION file:
+You can customize this configuration for different environments, though we recommend maintaining version information in
+the VERSION file:
 
 ```yaml
 shared:
@@ -101,30 +110,82 @@ staging:
 
 ```ruby
 # Get the current version
-Rails.application.version.to_s          # => "1.2.3"
+Rails.application.version.to_s # => "1.2.3"
 
 # Check version components
-Rails.application.version.major         # => 1
-Rails.application.version.minor         # => 2
-Rails.application.version.patch         # => 3
+Rails.application.version.major # => 1
+Rails.application.version.minor # => 2
+Rails.application.version.patch # => 3
 
 # Check version status
-Rails.application.version.production_ready?  # => true
-Rails.application.version.prerelease?       # => false
+Rails.application.version.production_ready? # => true
+Rails.application.version.prerelease? # => false
 
 # Get a cache-friendly version string
-Rails.application.version.to_cache_key  # => "1-2-3"
+Rails.application.version.to_cache_key # => "1-2-3"
 ```
+
+## Version Headers Middleware
+
+Rails AppVersion includes an optional middleware that adds version and environment information to HTTP response headers.
+This is particularly useful in staging and development environments to verify deployment success and track which version
+of the application is serving requests.
+
+### Configuring the Middleware
+
+Enable and configure the middleware in your `config/app_version.yml`:
+
+```yaml
+development:
+  middleware:
+    enabled: true
+    options:
+      include_revision: true  # Include git revision in headers
+      version_header: X-App-Version
+      environment_header: X-App-Environment
+      revision_header: X-App-Revision
+
+staging:
+  middleware:
+    enabled: true
+    options:
+      version_header: X-Staging-Version
+      environment_header: X-Staging-Environment
+```
+
+### Manual Middleware Configuration
+
+You can also add the middleware manually in your application configuration:
+
+```ruby
+# config/application.rb or config/environments/staging.rb
+config.middleware.use RailsAppVersion::AppInfoMiddleware, {
+  version_header: 'X-Custom-Version',
+  environment_header: 'X-Custom-Environment',
+  include_revision: true
+}
+```
+
+The middleware will add the following headers to each response:
+
+- X-App-Version: Current application version, optionally including revision (e.g., "1.2.3" or "1.2.3 (abc123de)")
+- X-App-Environment: Current environment (e.g., "staging")
+
+When `include_revision` is enabled, the version header will include the first 8 characters of the git revision in
+parentheses. This provides a quick way to verify both the version and the specific deployment in a single header.
+
+This makes it easy for developers to verify which version is deployed and running in each environment, particularly
+useful during deployments and debugging.
 
 ### Environment Management
 
 ```ruby
 # Get the current environment
-Rails.application.env                   # => "staging"
+Rails.application.env # => "staging"
 
 # Environment checks
-Rails.application.env.production?       # => false
-Rails.application.env.staging?         # => true
+Rails.application.env.production? # => false
+Rails.application.env.staging? # => true
 ```
 
 ### Console Integration
@@ -147,7 +208,41 @@ Rails AppVersion supports several version formats:
 - Short versions: "1.2" (major.minor)
 - Pre-release versions: "2.0.0-alpha" (with pre-release identifier)
 
-Version strings are parsed according to Semantic Versioning principles and maintain compatibility with `Gem::Version` for comparison operations.
+Version strings are parsed according to Semantic Versioning principles and maintain compatibility with `Gem::Version`
+for comparison operations.
+
+## Version Headers
+
+Enable version headers in HTTP responses to verify deployments and track running versions:
+
+```yaml
+# config/app_version.yml
+development:
+  middleware:
+    enabled: true
+    options:
+      include_revision: true
+
+staging:
+  middleware:
+    enabled: true
+```
+
+Or add the middleware manually:
+
+```ruby
+# config/application.rb
+config.middleware.use RailsAppVersion::AppInfoMiddleware, {
+  version_header: 'X-App-Version',
+  environment_header: 'X-App-Environment',
+  include_revision: true
+}
+```
+
+Headers added:
+
+- X-App-Version: "1.2.3" (or "1.2.3 (abc123de)" with revision)
+- X-App-Environment: "production"
 
 ## Contributing
 
