@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/seuros/rails_app_version/compare/v1.1.1...v1.2.0) (2024-12-23)
+
+
+### Features
+
+* Add version information middleware ([8fdee99](https://github.com/seuros/rails_app_version/commit/8fdee99b50f9264da42c4640d194c3a8869ac807))
+
 ## [1.1.1](https://github.com/seuros/rails_app_version/compare/v1.1.0...v1.1.1) (2024-12-22)
 
 
