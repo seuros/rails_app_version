@@ -27,7 +27,7 @@ module RailsAppVersion
     end
 
     def short_revision
-      revision&.slice(0, 8)
+      revision.to_s.slice(0, 8)
     end
 
     def prerelease?
