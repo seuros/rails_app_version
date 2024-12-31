@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/seuros/rails_app_version/compare/v1.2.0...v1.2.1) (2024-12-31)
+
+
+### Bug Fixes
+
+* fix middleware chaining ([1f505cd](https://github.com/seuros/rails_app_version/commit/1f505cd3502ae810fe9c350b0413614a1f6b4aa2))
+
 ## [1.2.0](https://github.com/seuros/rails_app_version/compare/v1.1.1...v1.2.0) (2024-12-23)
 
 
