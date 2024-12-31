@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/seuros/rails_app_version/compare/v1.2.1...v1.2.2) (2024-12-31)
+
+
+### Bug Fixes
+
+* revision crash when it only digit ([82783a4](https://github.com/seuros/rails_app_version/commit/82783a424d28c5392e8344dd0412277de07d6f7f))
+
 ## [1.2.1](https://github.com/seuros/rails_app_version/compare/v1.2.0...v1.2.1) (2024-12-31)
 
 
