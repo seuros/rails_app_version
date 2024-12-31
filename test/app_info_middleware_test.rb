@@ -63,4 +63,14 @@ module RailsAppVersion
       assert_equal "8.0.3", headers["X-App-Version"]
     end
   end
+
+  class AppInfoMiddlewareIntegrationTest < ActionDispatch::IntegrationTest
+    test "adds default version and environment headers" do
+      get "/"
+
+      assert_response :success
+      assert_equal "8.0.3 (c1be795b)", response.headers["X-App-Version"]
+      assert_equal "sandbox", response.headers["X-App-Environment"]
+    end
+  end
 end

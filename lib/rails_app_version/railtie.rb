@@ -45,9 +45,16 @@ module RailsAppVersion
                       all_configs = ActiveSupport::ConfigurationFile.parse(yaml).deep_symbolize_keys
                       all_configs[:shared]
                     end
-
       @version = RailsAppVersion::Version.create(@app_config[:version], @app_config[:revision])
       @env = ActiveSupport::StringInquirer.new(@app_config.fetch(:environment, Rails.env))
+    end
+
+    initializer "middleware" do |app|
+      # Add the middleware to the stack if enabled
+      if @app_config.dig(:middleware, :enabled)
+        options = @app_config.dig(:middleware, :options) || {}
+        app.middleware.insert_before Rails::Rack::Logger, RailsAppVersion::AppInfoMiddleware, **options
+      end
     end
   end
 end
