@@ -33,6 +33,14 @@ class AssetManifest
     "/assets/#{path}?v=#{Rails.application.version.to_cache_key}"
   end
 end
+
+# Or in your controller
+
+def index
+  Rails.cache.fetch("index-page#{Rails.application.version.to_cache_key}") do
+    render :index
+  end
+end
 ```
 
 ## Installation
@@ -48,7 +56,7 @@ Then execute:
 ```bash
 $ bundle install
 $ rails app:version:config  # Copies the default configuration file
-$ echo "1.0.0" > VERSION            # Create initial version file
+$ echo "1.0.0" > VERSION    # Create initial version file
 ```
 
 ## Version Management
@@ -61,7 +69,6 @@ The recommended approach is to maintain a `VERSION` file in your application's r
 only the version number:
 
 ```plaintext
-# VERSION
 1.2.3
 ```
 
@@ -128,7 +135,7 @@ Rails.application.version.to_cache_key # => "1-2-3"
 ## Version Headers Middleware
 
 Rails AppVersion includes an optional middleware that adds version and environment information to HTTP response headers.
-This is particularly useful in staging and development environments to verify deployment success and track which version
+This is particularly useful in staging and pre-production environments to verify deployment success and track which version
 of the application is serving requests.
 
 ### Configuring the Middleware
@@ -138,12 +145,7 @@ Enable and configure the middleware in your `config/app_version.yml`:
 ```yaml
 development:
   middleware:
-    enabled: true
-    options:
-      include_revision: true  # Include git revision in headers
-      version_header: X-App-Version
-      environment_header: X-App-Environment
-      revision_header: X-App-Revision
+    enabled: false
 
 staging:
   middleware:
@@ -161,8 +163,7 @@ You can also add the middleware manually in your application configuration:
 # config/application.rb or config/environments/staging.rb
 config.middleware.use RailsAppVersion::AppInfoMiddleware, {
   version_header: 'X-Custom-Version',
-  environment_header: 'X-Custom-Environment',
-  include_revision: true
+  environment_header: 'X-Custom-Environment'
 }
 ```
 
@@ -171,7 +172,7 @@ The middleware will add the following headers to each response:
 - X-App-Version: Current application version, optionally including revision (e.g., "1.2.3" or "1.2.3 (abc123de)")
 - X-App-Environment: Current environment (e.g., "staging")
 
-When `include_revision` is enabled, the version header will include the first 8 characters of the git revision in
+When `show_revision` is enabled, the version header will include the first 8 characters of the git revision in
 parentheses. This provides a quick way to verify both the version and the specific deployment in a single header.
 
 This makes it easy for developers to verify which version is deployed and running in each environment, particularly
@@ -210,39 +211,6 @@ Rails AppVersion supports several version formats:
 
 Version strings are parsed according to Semantic Versioning principles and maintain compatibility with `Gem::Version`
 for comparison operations.
-
-## Version Headers
-
-Enable version headers in HTTP responses to verify deployments and track running versions:
-
-```yaml
-# config/app_version.yml
-development:
-  middleware:
-    enabled: true
-    options:
-      include_revision: true
-
-staging:
-  middleware:
-    enabled: true
-```
-
-Or add the middleware manually:
-
-```ruby
-# config/application.rb
-config.middleware.use RailsAppVersion::AppInfoMiddleware, {
-  version_header: 'X-App-Version',
-  environment_header: 'X-App-Environment',
-  include_revision: true
-}
-```
-
-Headers added:
-
-- X-App-Version: "1.2.3" (or "1.2.3 (abc123de)" with revision)
-- X-App-Environment: "production"
 
 ## Contributing
 
