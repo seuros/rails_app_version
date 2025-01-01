@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4](https://github.com/seuros/rails_app_version/compare/v1.2.3...v1.2.4) (2025-01-01)
+
+
+### Bug Fixes
+
+* typo ([d798135](https://github.com/seuros/rails_app_version/commit/d7981358f78567992040d7926bd612d3ee667536))
+
 ## [1.2.3](https://github.com/seuros/rails_app_version/compare/v1.2.2...v1.2.3) (2025-01-01)
 
 
