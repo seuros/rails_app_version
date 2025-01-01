@@ -16,7 +16,7 @@ module RailsAppVersion
 
     def full
       return to_s unless revision
-      return to s if revision.to_s == "0"
+      return to_s if revision.to_s == "0"
       "#{self} (#{short_revision})"
     end
 
