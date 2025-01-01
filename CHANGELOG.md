@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/seuros/rails_app_version/compare/v1.2.2...v1.2.3) (2025-01-01)
+
+
+### Bug Fixes
+
+* when revision is 0, it should not show up ([ae23935](https://github.com/seuros/rails_app_version/commit/ae2393537be39d3d199082d229d558507fd73bc8))
+
 ## [1.2.2](https://github.com/seuros/rails_app_version/compare/v1.2.1...v1.2.2) (2024-12-31)
 
 

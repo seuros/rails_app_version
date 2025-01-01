@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module RailsAppVersion
-  VERSION = "1.2.2"
+  VERSION = "1.2.3"
 
   class Version < Gem::Version
     attr_reader :major, :minor, :patch, :pre, :revision
