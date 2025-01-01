@@ -16,6 +16,7 @@ module RailsAppVersion
 
     def full
       return to_s unless revision
+      return to s if revision.to_s == "0"
       "#{self} (#{short_revision})"
     end
 
@@ -27,7 +28,7 @@ module RailsAppVersion
     end
 
     def short_revision
-      revision.to_s.slice(0, 8)
+      revision.to_s.slice(0, 8).presence
     end
 
     def prerelease?
