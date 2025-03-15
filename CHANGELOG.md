@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/seuros/rails_app_version/compare/v1.3.0...v1.3.1) (2025-03-15)
+
+
+### Bug Fixes
+
+* reorder the initializers ([da1ae6c](https://github.com/seuros/rails_app_version/commit/da1ae6c3d80aa52f2a02bf8ee07ded1f9669f80d))
+
 ## [1.3.0](https://github.com/seuros/rails_app_version/compare/v1.2.4...v1.3.0) (2025-03-14)
 
 
