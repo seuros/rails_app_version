@@ -20,6 +20,11 @@ module RailsAppVersion
       print_console_banner
     end
 
+    initializer "rails_app_version.extend_application", before: :bootstrap_hook do
+      Rails::Application.include AppEnvironment
+      Rails::Application.include AppVersion
+    end
+
     initializer "rails_app_version.fetch_config" do |app|
       @app_config = load_config(app)
       @version = Version.create(@app_config[:version], @app_config[:revision])
@@ -32,11 +37,6 @@ module RailsAppVersion
         options = @app_config.dig(:middleware, :options) || {}
         app.middleware.insert_before Rails::Rack::Logger, AppInfoMiddleware, options
       end
-    end
-
-    initializer "rails_app_version.extend_application" do |app|
-      Rails::Application.include AppEnvironment
-      Rails::Application.include AppVersion
     end
 
     private
