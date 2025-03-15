@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/seuros/rails_app_version/compare/v1.3.1...v1.3.2) (2025-03-15)
+
+
+### Bug Fixes
+
+* remove patching from the initializer ([16b7ded](https://github.com/seuros/rails_app_version/commit/16b7ded21aa84c70da588f734df231977ec745af))
+
 ## [1.3.1](https://github.com/seuros/rails_app_version/compare/v1.3.0...v1.3.1) (2025-03-15)
 
 
