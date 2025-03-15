@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module RailsAppVersion
+
+  Rails::Application.include AppEnvironment
+  Rails::Application.include AppVersion
   class Railtie < ::Rails::Railtie
     CONFIG_FILE = "app_version.yml".freeze
 
@@ -18,11 +21,6 @@ module RailsAppVersion
 
     console do
       print_console_banner
-    end
-
-    initializer "rails_app_version.extend_application", before: :bootstrap_hook do
-      Rails::Application.include AppEnvironment
-      Rails::Application.include AppVersion
     end
 
     initializer "rails_app_version.fetch_config" do |app|
