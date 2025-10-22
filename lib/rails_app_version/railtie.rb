@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module RailsAppVersion
-
   Rails::Application.include AppEnvironment
   Rails::Application.include AppVersion
   class Railtie < ::Rails::Railtie
