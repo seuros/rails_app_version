@@ -15,5 +15,5 @@ appraise "r8" do
 end
 
 appraise "r81" do
-  gem "railties", github: "rails/rails"
+  gem "railties", "~> 8.1.0"
 end
