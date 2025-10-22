@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/seuros/rails_app_version/compare/v1.3.2...v1.4.0) (2025-10-22)
+
+
+### Features
+
+* add support for Rails 8.1.0 ([#31](https://github.com/seuros/rails_app_version/issues/31)) ([04cf800](https://github.com/seuros/rails_app_version/commit/04cf80095f11f9ad5318e3b3fcf5eb8d2171d3f8))
+
 ## [1.3.2](https://github.com/seuros/rails_app_version/compare/v1.3.1...v1.3.2) (2025-03-15)
 
 
