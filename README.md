@@ -17,8 +17,15 @@ production. Rails AppVersion helps you:
 
 ### Error Reporting Integration Example
 
+Using [Lapsoss](https://github.com/seuros/lapsoss) - a vendor-neutral error reporting gem:
+
 ```ruby
-Sentry.init do |config|
+# config/initializers/lapsoss.rb
+Lapsoss.configure do |config|
+  # Works with any service - switch vendors without code changes
+  config.use_telebugs(dsn: ENV['TELEBUGS_DSN'])
+
+  # Set release and environment from Rails AppVersion
   config.release = Rails.application.version.to_s
   config.environment = Rails.application.env
 end
