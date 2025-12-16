@@ -10,4 +10,4 @@ gem "rubocop-rails-omakase", require: false
 
 gem "dotenv-rails", require: "dotenv/load"
 
-gem "mocha", "~> 2.7"
+gem "mocha", "~> 3.0"
