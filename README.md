@@ -219,6 +219,25 @@ Rails AppVersion supports several version formats:
 Version strings are parsed according to Semantic Versioning principles and maintain compatibility with `Gem::Version`
 for comparison operations.
 
+## Using with release-please
+To have release-please automatically update a plain VERSION file in your repository:
+1. Add the inline marker to your VERSION file:
+```
+1.0.0 # x-release-please-version
+```
+
+2. Configure release-please in .github/release-please-config.json:
+```json
+{
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "extra-files": ["VERSION"]
+    }
+  }
+}
+```
+
 ## Contributing
 
 We welcome contributions! Here's how you can help:
