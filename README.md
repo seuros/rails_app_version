@@ -223,19 +223,53 @@ for comparison operations.
 To have release-please automatically update a plain VERSION file in your repository:
 1. Add the inline marker to your VERSION file:
 ```
-1.0.0 # x-release-please-version
+1.0.0
 ```
 
-2. Configure release-please in .github/release-please-config.json:
+2. Configure release-please
+
+Add the following to .github/release-please-config.json:
 ```json
 {
   "packages": {
     ".": {
       "release-type": "simple",
-      "extra-files": ["VERSION"]
+      "component": "App Name",
+      "version-file": "VERSION"
     }
   }
 }
+```
+
+3. Add the following to .github/release-please-manifest.json:
+```json
+{
+    ".": "1.0.0"
+}
+```
+
+4. Add the following to .github/workflows/release-please.yml:
+```yaml
+name: release-please
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          config-file: .github/release-please-config.json
+          manifest-file: .github/.release-please-manifest.json
 ```
 
 ## Contributing
