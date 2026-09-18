@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module RailsAppVersion
-  VERSION = "1.4.0"
+  VERSION = "1.5.0"
 
   # A Gem::Version with named segments, an optional VCS revision and cache-key
   # helpers.

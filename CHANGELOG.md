@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/seuros/rails_app_version/compare/v1.4.0...v1.5.0) (2026-09-18)
+
+
+### Features
+
+* support Ruby 3.4/4.0 and Rails 8+, test Rails edge ([#39](https://github.com/seuros/rails_app_version/issues/39)) ([41c3b60](https://github.com/seuros/rails_app_version/commit/41c3b60ee32c8a2301f90c51740feadc422cbb7f))
+
 ## [1.4.0](https://github.com/seuros/rails_app_version/compare/v1.3.2...v1.4.0) (2025-10-22)
 
 
