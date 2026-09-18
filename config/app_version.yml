@@ -1,6 +1,9 @@
 shared:
   version: <%= Rails.root.join('VERSION').read.strip rescue '0.0.0' %>
-  revision: <%= Rails.root.join('REVISION').read.strip rescue (`git rev-parse HEAD`.strip rescue '0') %>
+  # Blank on purpose. Rails resolves the deploy revision itself from
+  # ENV["REVISION"], the REVISION file, then `git rev-parse HEAD`.
+  # Set a value here only to override that.
+  revision:
   show_revision: <%= Rails.env.local? %>
   environment: <%= ENV.fetch('RAILS_APP_ENV', Rails.env) %>
   middleware:

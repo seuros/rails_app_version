@@ -15,7 +15,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ruby-3.3.4
+          ruby-version: '3.4'
           bundler-cache: true
 
       - name: Lint code for consistent style
@@ -26,19 +26,18 @@ jobs:
     env:
       RAILS_ENV: test
       RAILS_APP_ENV: sandbox
+    name: test (ruby ${{ matrix.ruby }}, ${{ matrix.rails }})
+    continue-on-error: ${{ matrix.rails == 'edge' }}
     strategy:
       fail-fast: false
       matrix:
         ruby:
           - '3.4'
-          - '3.3'
-          - '3.2'
+          - '4.0'
         rails:
-          - r7
-          - r71
-          - r72
           - r8
           - r81
+          - edge
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -47,10 +46,18 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+          # Edge tracks a moving branch, so its lockfile is not committed and
+          # the resolved bundle must not be restored from cache.
+          bundler-cache: ${{ matrix.rails != 'edge' }}
           rubygems: latest
         env:
           BUNDLE_GEMFILE: gemfiles/${{ matrix.rails }}.gemfile
+
+      - name: Install edge dependencies
+        if: matrix.rails == 'edge'
+        env:
+          BUNDLE_GEMFILE: gemfiles/${{ matrix.rails }}.gemfile
+        run: bundle install --jobs 4 --retry 3
 
       - name: Run tests
         env:

@@ -9,7 +9,9 @@ Bundler.require(*Rails.groups)
 
 module Dummy
   class Application < Rails::Application
-    config.load_defaults Rails::VERSION::STRING.to_f
+    # Pinned to the oldest supported Rails so the edge appraisal doesn't fail
+    # on defaults that only exist on main.
+    config.load_defaults 8.0
     config.api_only = true
   end
 end

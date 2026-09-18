@@ -19,4 +19,11 @@ class RailsAppVersionTest < ActiveSupport::TestCase
     assert_equal "sandbox", Rails.application.env
     assert Rails.application.env.sandbox?
   end
+
+  test "it exposes the parsed config" do
+    assert_respond_to Rails.application, :app_config
+
+    assert_equal "8.0.3", Rails.application.app_config[:version]
+    assert Rails.application.app_config.dig(:middleware, :enabled)
+  end
 end
