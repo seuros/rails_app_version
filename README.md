@@ -4,6 +4,17 @@ Rails AppVersion provides an opinionated version and environment management for 
 version and environment information throughout your application, it enables better error tracking, debugging, and
 deployment management.
 
+> [!NOTE]
+> **Part of this gem has been upstreamed into Rails.** Rails 8.2 ships `Rails.application.revision`, which resolves the
+> deploy revision from `ENV["REVISION"]`, the `REVISION` file, then `git rev-parse HEAD`. This gem defers to it rather
+> than reimplementing it. See [Revision resolution](#revision-resolution).
+>
+> The middleware has **not** been upstreamed, and is the main reason to still reach for this gem. It advertises the
+> running version and environment on every response (`X-App-Version`, `X-App-Environment`), which lets external
+> agents (uptime monitors, deploy verifiers, load balancers, LLM agents poking at an endpoint) tell *when a server was
+> deployed* without shell access to it. `Rails.application.revision` is only readable from inside the process; the
+> header is readable from anywhere.
+
 ## Why Use Rails AppVersion?
 
 Version and environment tracking are important for modern web applications, particularly when debugging issues in
@@ -95,11 +106,24 @@ The default configuration file is located at `config/app_version.yml`:
 shared:
   # Attempts to read from VERSION file, falls back to '0.0.0'
   version: <%= Rails.root.join('VERSION').read.strip rescue '0.0.0' %>
-  # Attempts to read from REVISION file, then tries git commit hash, finally falls back to '0'
-  revision: <%= Rails.root.join('REVISION').read.strip rescue (`git rev-parse HEAD`.strip rescue '0') %>
+  # Blank on purpose. See "Revision resolution" below
+  revision:
   show_revision: <%= Rails.env.local? %>
   environment: <%= ENV.fetch('RAILS_APP_ENV', Rails.env) %>
 ```
+
+#### Revision resolution
+
+Rails 8.2 resolves the deploy revision itself via `Rails.application.revision`, checking `ENV["REVISION"]`, then the
+`REVISION` file, then `git rev-parse HEAD`. This gem defers to it rather than reimplementing that lookup, so the
+resolution order is:
+
+1. An explicit `revision:` in `config/app_version.yml`, if set
+2. `Rails.application.revision` (Rails 8.2+)
+3. On Rails 8.0/8.1 only: `ENV["REVISION"]`, then the `REVISION` file
+
+On Rails 8.0 and 8.1 there is no `git rev-parse` fallback: deploy a `REVISION` file or set `ENV["REVISION"]` rather
+than shelling out on every boot. Step 3 goes away once Rails 8.2 is the minimum supported version.
 
 You can customize this configuration for different environments, though we recommend maintaining version information in
 the VERSION file:
@@ -202,11 +226,18 @@ The gem automatically displays version and environment information when you star
 
 ```
 Welcome to the Rails console!
-Ruby version: 3.2.0
+Ruby version: 3.4.0
 Application environment: staging
 Application version: 1.2.3
 To exit, press `Ctrl + D`.
 ```
+
+## Requirements
+
+- Ruby >= 3.4
+- Rails >= 8.0
+
+CI runs the suite against Ruby 3.4 and 4.0, on Rails 8.0, 8.1 and `rails/rails@main`.
 
 ## Version Format
 
@@ -214,10 +245,10 @@ Rails AppVersion supports several version formats:
 
 - Standard versions: "1.2.3" (major.minor.patch)
 - Short versions: "1.2" (major.minor)
-- Pre-release versions: "2.0.0-alpha" (with pre-release identifier)
+- Pre-release versions: "2.0.0-alpha", "2.0.0.alpha" or "2.0.0.pre.alpha" (all expose `pre == "alpha"`)
 
-Version strings are parsed according to Semantic Versioning principles and maintain compatibility with `Gem::Version`
-for comparison operations.
+Parsing is delegated to `Gem::Version`, so comparison operators behave exactly as they do for gem versions.
+Malformed strings raise `ArgumentError` rather than silently parsing as `0`.
 
 ## Using with release-please
 To have release-please automatically update a plain VERSION file in your repository:

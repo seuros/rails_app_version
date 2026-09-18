@@ -55,6 +55,36 @@ module RailsAppVersion
       assert_equal "2-0-0-alpha", @pre_version.to_cache_key
     end
 
+    test "extracts the prerelease label from every Gem::Version spelling" do
+      assert_equal "alpha", Version.create("2.0.0-alpha").pre
+      assert_equal "alpha", Version.create("2.0.0.alpha").pre
+      assert_equal "alpha", Version.create("2.0.0.pre.alpha").pre
+
+      assert Version.create("2.0.0.alpha").prerelease?
+      assert_equal "2-0-0-alpha", Version.create("2.0.0.alpha").to_cache_key
+    end
+
+    test "omits the revision from the full version string when absent" do
+      assert_equal "1.2.3", @version_three_parts.full
+    end
+
+    test "treats a zero revision as no revision" do
+      version = Version.create("1.2.3", "0")
+
+      assert_nil version.short_revision
+      assert_equal "1.2.3", version.full
+    end
+
+    test "rejects nil and empty version strings" do
+      assert_raises(ArgumentError) { Version.create(nil) }
+      assert_raises(ArgumentError) { Version.create("") }
+      assert_raises(ArgumentError) { Version.create("   ") }
+    end
+
+    test "rejects malformed version strings" do
+      assert_raises(ArgumentError) { Version.create("not-a-version") }
+    end
+
     test "maintains compatibility with Gem::Version comparison" do
       assert Version.create("2.0") > Version.create("1.9")
       assert Version.create("1.2") < Version.create("1.2.1")
